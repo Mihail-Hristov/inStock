@@ -6,17 +6,17 @@ public class Instock implements ProductStock {
 
     @Override
     public int getCount() {
-        throw new UnsupportedOperationException();
+        return 0;
     }
 
     @Override
     public boolean contains(Product product) {
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public void add(Product product) {
-        throw new UnsupportedOperationException();
+
     }
 
     @Override
@@ -26,7 +26,7 @@ public class Instock implements ProductStock {
 
     @Override
     public Product find(int index) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
