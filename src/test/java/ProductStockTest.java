@@ -2,8 +2,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProductStockTest {
 
@@ -81,9 +81,80 @@ public class ProductStockTest {
     public void testFindByIndexWhenIndexIsOutOfBound() {
         Product product = createProducts();
         stock.add(product);
-        Product findByIndex = stock.find(stock.getCount());
-        Assert.assertNotNull(findByIndex);
-        Assert.assertEquals(product.getLabel(), findByIndex.getLabel());
+        stock.find(stock.getCount());
+    }
+
+    @Test
+    public void testChaneQuantityByGivenProduct() {
+        int newQuantity = 5;
+        Product product = createProducts();
+        stock.add(product);
+        stock.changeQuantity("Test_Label", newQuantity);
+        Product productWithNewQuantity = stock.find(0);
+        Assert.assertNotNull(productWithNewQuantity);
+        Assert.assertEquals(newQuantity, productWithNewQuantity.getQuantity());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testChangeQuantityForNotPresentProduct() {
+        Product product = createProducts();
+        stock.changeQuantity(product.getLabel(), product.getQuantity() + 10);
+    }
+
+    @Test
+    public void testFindByLabelReturnCorrectProductByGivenLabel() {
+        String testLabel = "Current_Label";
+        Product product = new Product(testLabel, 3, 1);
+        fillProductsInStack(10);
+        stock.add(product);
+        Product foundProduct = stock.findByLabel(testLabel);
+        Assert.assertNotNull(foundProduct);
+        Assert.assertEquals(testLabel, foundProduct.getLabel());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testFindByLabelWhenLabelIsNotPresentInTheStock() {
+        Product product = createProducts();
+        fillProductsInStack(10);
+        stock.add(product);
+        Product foundProduct = stock.findByLabel("No_Exist_Label");
+    }
+
+    @Test
+    public void testFindFirstByAlphabeticalOrderReturnCorrectNumberOfProduct() {
+        fillProductsInStack(10);
+        stock.findFirstByAlphabeticalOrder(8);
+        Iterable<Product> product = stock.findFirstByAlphabeticalOrder(6);
+        Assert.assertNotNull(product);
+        List<Product> products = createListFromIterable(product);
+        Assert.assertEquals(6, products.size());
+    }
+
+    @Test
+    public void testFindFirstByAlphabeticalOrderReturnCorrectProduct() {
+        fillProductsInStack(10);
+        stock.findFirstByAlphabeticalOrder(8);
+        Iterable<Product> product = stock.findFirstByAlphabeticalOrder(6);
+        Assert.assertNotNull(product);
+        List<Product> returnedProducts = createListFromIterable(product);
+        Set<String> expectedLabels = returnedProducts.stream()
+                .map(Product::getLabel)
+                .collect(Collectors.toCollection(TreeSet::new));
+
+        int index = 0;
+        for (String expectLabel : expectedLabels) {
+            Assert.assertEquals(expectLabel, returnedProducts.get(index++).getLabel());
+        }
+        Assert.assertEquals(6, returnedProducts.size());
+    }
+
+    @Test
+    public void testFindFirstByAlphabeticalOrderReturnEmptyCollectionIfArgumentIsOutOfRange() {
+        fillProductsInStack(10);
+        Iterable<Product> products = stock.findFirstByAlphabeticalOrder(stock.getCount() + 1);
+        Assert.assertNotNull(products);
+        List<Product> returnedProducts = createListFromIterable(products);
+        Assert.assertTrue(returnedProducts.isEmpty());
     }
 
 
@@ -108,6 +179,16 @@ public class ProductStockTest {
         for (Product product : products) {
             stock.add(product);
         }
+    }
+
+    private static <T> List<T> createListFromIterable(Iterable<T> products) {
+        List<T> result = new ArrayList<>();
+
+        for (T product : products) {
+            result.add(product);
+        }
+
+        return result;
     }
 
 }

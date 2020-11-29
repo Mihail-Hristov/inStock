@@ -21,7 +21,7 @@ public class Instock implements ProductStock {
 
     @Override
     public void changeQuantity(String product, int quantity) {
-        throw new UnsupportedOperationException();
+
     }
 
     @Override
@@ -31,12 +31,12 @@ public class Instock implements ProductStock {
 
     @Override
     public Product findByLabel(String label) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public Iterable<Product> findFirstByAlphabeticalOrder(int count) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
