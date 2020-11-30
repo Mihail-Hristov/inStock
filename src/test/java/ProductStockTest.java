@@ -89,7 +89,7 @@ public class ProductStockTest {
         int newQuantity = 5;
         Product product = createProducts();
         stock.add(product);
-        stock.changeQuantity("Test_Label", newQuantity);
+        stock.changeQuantity("Test_level_1", newQuantity);
         Product productWithNewQuantity = stock.find(0);
         Assert.assertNotNull(productWithNewQuantity);
         Assert.assertEquals(newQuantity, productWithNewQuantity.getQuantity());
@@ -157,7 +157,241 @@ public class ProductStockTest {
         Assert.assertTrue(returnedProducts.isEmpty());
     }
 
+    @Test
+    public void testFindAllInPriceRangeReturnCorrectProductInDescendingOrder() {
+        Product product5 = new Product("Test_Label_5", 5, 1);
+        Product product6 = new Product("Test_Label_6", 6, 1);
+        Product product7 = new Product("Test_Label_7", 7, 1);
+        Product product8 = new Product("Test_Label_8", 8, 1);
+        Product product9 = new Product("Test_Label_9", 9, 1);
+        Product product10 = new Product("Test_Label_10", 10, 1);
+        Product product11 = new Product("Test_Label_11", 11, 1);
 
+        stock.add(product5);
+        stock.add(product6);
+        stock.add(product7);
+        stock.add(product8);
+        stock.add(product9);
+        stock.add(product10);
+        stock.add(product11);
+
+        Iterable<Product> products = stock.findAllInRange(7, 10);
+        Assert.assertNotNull(products);
+        List<Product> returnedList = createListFromIterable(products);
+
+        Assert.assertEquals(3, returnedList.size());
+
+        Assert.assertEquals("Test_Label_10", returnedList.get(0).getLabel());
+        Assert.assertEquals("Test_Label_9", returnedList.get(1).getLabel());
+        Assert.assertEquals("Test_Label_8", returnedList.get(2).getLabel());
+
+    }
+
+    @Test
+    public void testFindAllInPriceReturnEmptyCollectionIsNoSuchElement() {
+        Product product5 = new Product("Test_Label_5", 5, 1);
+        Product product6 = new Product("Test_Label_6", 6, 1);
+        Product product7 = new Product("Test_Label_7", 7, 1);
+        Product product8 = new Product("Test_Label_8", 8, 1);
+        Product product9 = new Product("Test_Label_9", 9, 1);
+        Product product10 = new Product("Test_Label_10", 10, 1);
+        Product product11 = new Product("Test_Label_11", 11, 1);
+
+        stock.add(product5);
+        stock.add(product6);
+        stock.add(product7);
+        stock.add(product8);
+        stock.add(product9);
+        stock.add(product10);
+        stock.add(product11);
+
+        Iterable<Product> products = stock.findAllInRange(11, 15);
+        Assert.assertNotNull(products);
+        List<Product> returnedList = createListFromIterable(products);
+        Assert.assertTrue(returnedList.isEmpty());
+    }
+
+    @Test
+    public void testFindAllByPriceReturnCorrectProducts() {
+        Product product5 = new Product("Test_Label_5", 5, 1);
+        Product product6 = new Product("Test_Label_6", 7, 1);
+        Product product7 = new Product("Test_Label_7", 7, 1);
+        Product product8 = new Product("Test_Label_8", 7, 1);
+        Product product9 = new Product("Test_Label_9", 7, 1);
+        Product product10 = new Product("Test_Label_10", 10, 1);
+        Product product11 = new Product("Test_Label_11", 11, 1);
+
+        stock.add(product5);
+        stock.add(product6);
+        stock.add(product7);
+        stock.add(product8);
+        stock.add(product9);
+        stock.add(product10);
+        stock.add(product11);
+
+        Iterable<Product> products = stock.findAllByPrice(7);
+        Assert.assertNotNull(products);
+        List<Product> returnedList = createListFromIterable(products);
+        Assert.assertEquals(4, returnedList.size());
+
+        Assert.assertEquals(7, returnedList.get(0).getPrice(), 0);
+        Assert.assertEquals(7, returnedList.get(1).getPrice(), 0);
+        Assert.assertEquals(7, returnedList.get(2).getPrice(), 0);
+        Assert.assertEquals(7, returnedList.get(3).getPrice(), 0);
+    }
+
+    @Test
+    public void testFindAllByPriceReturnEmptyCollectionWhenNoSuchPrice(){
+        Product product5 = new Product("Test_Label_5", 5, 1);
+        Product product6 = new Product("Test_Label_6", 7, 1);
+        Product product7 = new Product("Test_Label_7", 7, 1);
+        Product product8 = new Product("Test_Label_8", 7, 1);
+        Product product9 = new Product("Test_Label_9", 7, 1);
+        Product product10 = new Product("Test_Label_10", 10, 1);
+        Product product11 = new Product("Test_Label_11", 11, 1);
+
+        stock.add(product5);
+        stock.add(product6);
+        stock.add(product7);
+        stock.add(product8);
+        stock.add(product9);
+        stock.add(product10);
+        stock.add(product11);
+
+        Iterable<Product> products = stock.findAllByPrice(8);
+        Assert.assertNotNull(products);
+        List<Product> returnedList = createListFromIterable(products);
+        Assert.assertTrue(returnedList.isEmpty());
+    }
+
+    @Test
+    public void testFindFirstMostExpensiveProductsReturnCorrectProducts() {
+        Product product5 = new Product("Test_Label_5", 5, 1);
+        Product product6 = new Product("Test_Label_6", 6, 1);
+        Product product7 = new Product("Test_Label_7", 7, 1);
+        Product product8 = new Product("Test_Label_8", 8, 1);
+        Product product9 = new Product("Test_Label_9", 9, 1);
+        Product product10 = new Product("Test_Label_10", 10, 1);
+        Product product11 = new Product("Test_Label_11", 11, 1);
+
+        stock.add(product5);
+        stock.add(product6);
+        stock.add(product7);
+        stock.add(product8);
+        stock.add(product9);
+        stock.add(product10);
+        stock.add(product11);
+
+        Iterable<Product> products = stock.findFirstMostExpensiveProducts(4);
+        Assert.assertNotNull(products);
+        List<Product> returnedList = createListFromIterable(products);
+        Assert.assertEquals(4, returnedList.size());
+
+        Assert.assertEquals(11, returnedList.get(0).getPrice(), 0);
+        Assert.assertEquals(10, returnedList.get(1).getPrice(), 0);
+        Assert.assertEquals(9, returnedList.get(2).getPrice(), 0);
+        Assert.assertEquals(8, returnedList.get(3).getPrice(), 0);
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testFindFirstMostExpensiveProductToThrowExceptionWhenSearchMoreThanExist() {
+        Product product5 = new Product("Test_Label_5", 5, 1);
+        Product product6 = new Product("Test_Label_6", 6, 1);
+        Product product7 = new Product("Test_Label_7", 7, 1);
+        Product product8 = new Product("Test_Label_8", 8, 1);
+        Product product9 = new Product("Test_Label_9", 9, 1);
+        Product product10 = new Product("Test_Label_10", 10, 1);
+        Product product11 = new Product("Test_Label_11", 11, 1);
+
+        stock.add(product5);
+        stock.add(product6);
+        stock.add(product7);
+        stock.add(product8);
+        stock.add(product9);
+        stock.add(product10);
+        stock.add(product11);
+
+        Iterable<Product> products = stock.findFirstMostExpensiveProducts(9);
+        Assert.assertNotNull(products);
+    }
+
+    @Test
+    public void testFindAllByQuantityReturnCorrectProducts() {
+        Product product5 = new Product("Test_Label_5", 5, 14);
+        Product product6 = new Product("Test_Label_6", 6, 7);
+        Product product7 = new Product("Test_Label_7", 7, 3);
+        Product product8 = new Product("Test_Label_8", 8, 11);
+        Product product9 = new Product("Test_Label_9", 9, 11);
+        Product product10 = new Product("Test_Label_10", 10, 17);
+        Product product11 = new Product("Test_Label_11", 11, 20);
+
+        stock.add(product5);
+        stock.add(product6);
+        stock.add(product7);
+        stock.add(product8);
+        stock.add(product9);
+        stock.add(product10);
+        stock.add(product11);
+
+        Iterable<Product> products = stock.findAllByQuantity(11);
+        Assert.assertNotNull(products);
+        List<Product> returnedList = createListFromIterable(products);
+        Assert.assertEquals(2, returnedList.size());
+
+        Assert.assertEquals(11, returnedList.get(0).getQuantity());
+        Assert.assertEquals(11, returnedList.get(1).getQuantity());
+    }
+
+    @Test
+    public void testFindAllByQuantityReturnEmptyCollectionIfNoSuchQuantity() {
+        Product product5 = new Product("Test_Label_5", 5, 14);
+        Product product6 = new Product("Test_Label_6", 6, 7);
+        Product product7 = new Product("Test_Label_7", 7, 3);
+        Product product8 = new Product("Test_Label_8", 8, 11);
+        Product product9 = new Product("Test_Label_9", 9, 11);
+        Product product10 = new Product("Test_Label_10", 10, 17);
+        Product product11 = new Product("Test_Label_11", 11, 20);
+
+        stock.add(product5);
+        stock.add(product6);
+        stock.add(product7);
+        stock.add(product8);
+        stock.add(product9);
+        stock.add(product10);
+        stock.add(product11);
+
+        Iterable<Product> products = stock.findAllByQuantity(2);
+        Assert.assertNotNull(products);
+        List<Product> returnedList = createListFromIterable(products);
+        Assert.assertTrue(returnedList.isEmpty());
+    }
+
+    @Test
+    public void testGetIterableProductReturnAllProductsInStock() {
+        Product product5 = new Product("Test_Label_5", 5, 14);
+        Product product6 = new Product("Test_Label_6", 6, 7);
+        Product product7 = new Product("Test_Label_7", 7, 3);
+        Product product8 = new Product("Test_Label_8", 8, 11);
+        Product product9 = new Product("Test_Label_9", 9, 11);
+        Product product10 = new Product("Test_Label_10", 10, 17);
+        Product product11 = new Product("Test_Label_11", 11, 20);
+
+        stock.add(product5);
+        stock.add(product6);
+        stock.add(product7);
+        stock.add(product8);
+        stock.add(product9);
+        stock.add(product10);
+        stock.add(product11);
+
+        Iterator<Product> products = stock.iterator();
+        Assert.assertNotNull(products);
+        List<Product> returnedProducts = createListFromIterator(products);
+
+        Assert.assertEquals(7, returnedProducts.size());
+
+    }
 
 
     private static Product createProducts() {
@@ -186,6 +420,16 @@ public class ProductStockTest {
 
         for (T product : products) {
             result.add(product);
+        }
+
+        return result;
+    }
+
+    private static <T> List<T> createListFromIterator(Iterator<T> products) {
+        List<T> result = new ArrayList<>();
+
+        while (products.hasNext()) {
+            result.add(products.next());
         }
 
         return result;
